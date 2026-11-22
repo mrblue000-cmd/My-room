@@ -302,11 +302,19 @@ function syncMap() {
     if (el) el.classList.toggle("is-dim", !ok);
   });
 
-  // 지역 필터를 고르면 그 지역 핀으로 지도를 옮깁니다.
+  // 지역 필터를 고르면 그 지역 핀으로, 전체로 돌리면 다시 전체 핀으로 지도를 옮깁니다.
   if (state.region !== lastRegion) {
     lastRegion = state.region;
-    if (state.region !== "전체" && visible.length) {
-      map.flyToBounds(visible, { padding: [60, 60], maxZoom: 11, duration: 0.7 });
+    if (visible.length) {
+      const allPins = posts
+        .filter((p) => p.place && typeof p.place.lat === "number")
+        .map((p) => [p.place.lat, p.place.lng]);
+      const target = state.region === "전체" ? allPins : visible;
+      map.flyToBounds(target, {
+        padding: [60, 60],
+        maxZoom: state.region === "전체" ? 12 : 11,
+        duration: 0.7,
+      });
     }
   }
 }
