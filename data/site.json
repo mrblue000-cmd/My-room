@@ -1,0 +1,21 @@
+{
+  "title": "맛과 길",
+  "titleEn": "MAT & GIL",
+  "tagline": "성민의 맛집·여행 노트",
+  "description": "다녀온 곳, 먹어본 것, 다시 가고 싶은 자리. 사진과 짧은 기록으로 남기는 나만의 아카이브.",
+  "author": "성민",
+  "url": "https://mrblue000-cmd.github.io/",
+  "categories": [
+    { "id": "전체", "label": "전체" },
+    { "id": "맛집", "label": "맛집" },
+    { "id": "여행", "label": "여행" }
+  ],
+  "regions": [
+    { "id": "용인·경기", "label": "용인·경기" },
+    { "id": "서울", "label": "서울" },
+    { "id": "국내여행", "label": "국내여행" },
+    { "id": "일본·해외", "label": "일본·해외" }
+  ],
+  "mapCenter": [37.4, 127.6],
+  "mapZoom": 7
+}
