@@ -16,6 +16,7 @@ let posts = [];
 let map = null;
 let markerById = new Map();
 let mapBound = false;
+let lastRegion = "전체";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -291,12 +292,23 @@ function initMap() {
 
 function syncMap() {
   if (!map) return;
+  const visible = [];
   posts.forEach((post) => {
     const m = markerById.get(post.id);
     if (!m) return;
+    const ok = matches(post);
+    if (ok) visible.push(m.getLatLng());
     const el = m.getElement()?.querySelector(".map-pin");
-    if (el) el.classList.toggle("is-dim", !matches(post));
+    if (el) el.classList.toggle("is-dim", !ok);
   });
+
+  // 지역 필터를 고르면 그 지역 핀으로 지도를 옮깁니다.
+  if (state.region !== lastRegion) {
+    lastRegion = state.region;
+    if (state.region !== "전체" && visible.length) {
+      map.flyToBounds(visible, { padding: [60, 60], maxZoom: 11, duration: 0.7 });
+    }
+  }
 }
 
 /* ---------- modal ---------- */
