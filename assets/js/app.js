@@ -36,6 +36,9 @@ const catClass = (cat) => (cat === "여행" ? "travel" : "food");
 
 const ratingText = (r) => (typeof r === "number" ? r.toFixed(1) : null);
 
+// 글의 순서는 올린 날짜(published)를 우선하고, 없으면 방문일(date)을 씁니다.
+const sortKey = (post) => post.published || post.date;
+
 function matches(post) {
   if (state.category !== "전체" && post.category !== state.category) return false;
   if (state.region !== "전체" && post.region !== state.region) return false;
@@ -54,7 +57,7 @@ function filteredPosts() {
   return posts
     .filter(matches)
     .slice()
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+    .sort((a, b) => (sortKey(a) < sortKey(b) ? 1 : sortKey(a) > sortKey(b) ? -1 : 0));
 }
 
 const byId = (id) => posts.find((p) => p.id === id);
@@ -68,7 +71,7 @@ function renderSite() {
 }
 
 function renderHero() {
-  const latest = posts.slice().sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+  const latest = posts.slice().sort((a, b) => (sortKey(a) < sortKey(b) ? 1 : -1))[0];
   if (!latest) return;
   const section = $("#featured");
   $("#hero-img").src = latest.cover;
@@ -183,7 +186,7 @@ function cardEl(post, index) {
       <p class="card-oneline">${esc(post.oneline || "")}</p>
       <div class="card-foot">
         <div class="card-tags">${(post.tags || []).slice(0, 3).map((t) => `<span>${esc(t)}</span>`).join("")}</div>
-        <span class="badge badge--sample">예시</span>
+        ${post.sample === false ? "" : '<span class="badge badge--sample">예시</span>'}
       </div>
     </div>`;
   const media = $(".card-media", el);
@@ -329,7 +332,9 @@ function openPost(id) {
 
   $("#modal-img").src = post.cover;
   $("#modal-img").alt = post.coverAlt || post.title;
-  $("#modal-badge").textContent = "예시 기록 · 실제 방문기가 아닙니다";
+  const sampleBadge = $("#modal-badge");
+  sampleBadge.hidden = post.sample === false;
+  sampleBadge.textContent = "예시 기록 · 실제 방문기가 아닙니다";
   $("#modal-title").textContent = post.title;
   $("#modal-oneline").textContent = post.oneline || "";
 
